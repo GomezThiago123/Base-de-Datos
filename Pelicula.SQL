@@ -174,3 +174,42 @@ JOIN inventory i ON r.inventory_id = i.inventory_id
 JOIN film f ON i.film_id = f.film_id
 WHERE f.title = 'ALABAMA DEVIL'
 ORDER BY r.rental_date DESC;
+/*
+13)Nombre, duración y categoria de todas
+ las peliculas ordenados del más largo al más corto.
+*/ 
+SELECT 
+    f.title AS nombre_pelicula,
+    f.length AS duracion_minutos,
+    c.name AS categoria
+FROM film f
+JOIN film_category fc ON f.film_id = fc.film_id
+JOIN category c ON fc.category_id = c.category_id
+ORDER BY f.length DESC;
+/*
+14)Nombre de las peliculas que arranquen
+‘’w’’ con al menos 5 actores.
+*/ 
+SELECT 
+    c.first_name AS nombre,
+    c.last_name AS apellido,
+    ROUND(SUM(p.amount), 2) AS total_pagado
+FROM customer c
+JOIN payment p ON c.customer_id = p.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_pagado DESC;
+
+
+/*
+16)Nombre de la pelicula, duración y nombre 
+del actor de las peliculas más cortas.
+*/ 
+SELECT 
+    f.title AS nombre_pelicula,
+    f.length AS duracion_minutos,
+    CONCAT(a.first_name, ' ', a.last_name) AS nombre_actor
+FROM film f
+JOIN film_actor fa ON f.film_id = fa.film_id
+JOIN actor a ON fa.actor_id = a.actor_id
+WHERE f.length = (SELECT MIN(length) FROM film)
+ORDER BY nombre_pelicula, nombre_actor;
