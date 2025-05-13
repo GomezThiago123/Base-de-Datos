@@ -199,6 +199,19 @@ JOIN payment p ON c.customer_id = p.customer_id
 GROUP BY c.customer_id, c.first_name, c.last_name
 ORDER BY total_pagado DESC;
 
+/*
+15)Calcular la suma total de los pagos (amount) 
+con nombre y apellido de cada cliente.
+*/
+SELECT 
+    c.first_name AS nombre,
+    c.last_name AS apellido,
+    SUM(p.amount) AS total_pagado
+FROM customer c
+JOIN payment p ON c.customer_id = p.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_pagado DESC;
+
 
 /*
 16)Nombre de la pelicula, duración y nombre 
@@ -213,3 +226,64 @@ JOIN film_actor fa ON f.film_id = fa.film_id
 JOIN actor a ON fa.actor_id = a.actor_id
 WHERE f.length = (SELECT MIN(length) FROM film)
 ORDER BY nombre_pelicula, nombre_actor;
+/*
+17)apellido del cliente con su ciudad, pais, direccion, 
+sus alquileres y pagos, ordenado los pagos de menor a mayor.
+*/
+SELECT 
+    c.last_name AS apellido_cliente,
+    a.address AS direccion,
+    ci.city AS ciudad,
+    co.country AS pais,
+    COUNT(DISTINCT r.rental_id) AS cantidad_alquileres,
+    SUM(p.amount) AS total_pagado
+FROM customer c
+JOIN address a ON c.address_id = a.address_id
+JOIN city ci ON a.city_id = ci.city_id
+JOIN country co ON ci.country_id = co.country_id
+JOIN rental r ON c.customer_id = r.customer_id
+JOIN payment p ON c.customer_id = p.customer_id
+GROUP BY c.customer_id, c.last_name, a.address, ci.city, co.country
+ORDER BY total_pagado ASC;
+
+/*
+18)Insertarse uno mismo como actor
+ con todos sus campos.
+*/
+INSERT INTO actor (actor_id, first_name, last_name, last_update)
+VALUES (201, 'THIAGO', 'GOMEZ', DATETIME('now'));
+/*
+19)Insertar 2 amigos o nombres que consideren.
+*/
+INSERT INTO actor (actor_id, first_name, last_name, last_update)
+VALUES 
+(202, 'MIGUEL', 'DIAZ', DATETIME('now')),
+(203, 'JOEL', 'CARI', DATETIME('now'));
+/*
+20)Modificar los 3 datos ingresados por
+ datos nuevos o de gente famosa.
+*/
+UPDATE actor
+SET first_name = 'RYAN', last_name = 'GOSLING', last_update = DATETIME('now')
+WHERE actor_id = 201;
+
+UPDATE actor
+SET first_name = 'BRAD', last_name = 'PITT', last_update = DATETIME('now')
+WHERE actor_id = 202;
+
+UPDATE actor
+SET first_name = 'ADAM', last_name = 'SANDLER', last_update = DATETIME('now')
+WHERE actor_id = 203;
+/*
+21)Borrar todos los datos ingresados finalmente.
+*/
+DELETE FROM film_actor
+WHERE actor_id IN (201, 202, 203);
+
+DELETE FROM actor
+WHERE actor_id IN (201, 202, 203);
+
+SELECT * FROM actor WHERE actor_id IN (201, 202, 203);
+/**
+Consignas SAKILA: HECHO, COMPROBADO Y FINALIZADO
+/
